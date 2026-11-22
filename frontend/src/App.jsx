@@ -15,6 +15,9 @@ import LoginPage from "./pages/LoginPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PropertyDetails from "./pages/PropertyDetails.jsx";
 
+// Member 3: Accommodation
+import AddAccommodation from "./pages/AddAccommodation";
+
 function App() {
   return (
     <BrowserRouter>
@@ -37,6 +40,12 @@ function App() {
         <Route
           path="/properties/:id"
           element={<PropertyDetails />}
+        />
+
+        {/* ADMIN: ADD ACCOMMODATION */}
+        <Route
+          path="/admin/properties/new"
+          element={<AddAccommodation />}
         />
 
         {/* UNKNOWN ROUTES */}
