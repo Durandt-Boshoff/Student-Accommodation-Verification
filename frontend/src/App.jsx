@@ -6,6 +6,11 @@ import {
   Navigate,
 } from "react-router-dom";
 
+// Member 1: Landing and Sign Up
+import LandingPage from "./LandingPage";
+import SignUpPage from "./SignUpPage";
+
+// Member 2: Login and Student pages
 import LoginPage from "./pages/LoginPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PropertyDetails from "./pages/PropertyDetails.jsx";
@@ -15,8 +20,11 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* LOGIN PAGE */}
-        <Route path="/" element={<LoginPage />} />
+        {/* LANDING PAGE */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* AUTHENTICATION */}
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* STUDENT DASHBOARD */}
