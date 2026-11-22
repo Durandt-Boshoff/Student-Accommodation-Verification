@@ -18,6 +18,10 @@ import PropertyDetails from "./pages/PropertyDetails.jsx";
 // Member 3: Accommodation
 import AddAccommodation from "./pages/AddAccommodation";
 
+// Member 4: Admin pages
+import AdminDashboard from "./pages/admin/adminDashboard";
+import ManageAccommodation from "./pages/admin/manageAccommodation";
+
 function App() {
   return (
     <BrowserRouter>
@@ -40,6 +44,18 @@ function App() {
         <Route
           path="/properties/:id"
           element={<PropertyDetails />}
+        />
+
+        {/* ADMIN: DASHBOARD */}
+        <Route
+          path="/admin/dashboard"
+          element={<AdminDashboard />}
+        />
+
+        {/* ADMIN: MANAGE ACCOMMODATION */}
+        <Route
+          path="/admin/properties"
+          element={<ManageAccommodation />}
         />
 
         {/* ADMIN: ADD ACCOMMODATION */}
