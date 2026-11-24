@@ -1,11 +1,34 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../services/authService";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
-  const handleLogout = () => {
-    window.location.href = "/";
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    setLogoutError("");
+
+    try {
+      await logoutUser();
+
+      setMenuOpen(false);
+      navigate("/login", { replace: true });
+
+    } catch (error) {
+      setLogoutError(
+        error.message || "Unable to log out. Please try again."
+      );
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -40,16 +63,19 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* LOGOUT BUTTON */}
+        {/* DESKTOP LOGOUT BUTTON */}
         <button
+          type="button"
           onClick={handleLogout}
-          className="hidden rounded-full border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-[#087CFF] hover:bg-[#087CFF] hover:text-white md:block"
+          disabled={isLoggingOut}
+          className="hidden rounded-full border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-[#087CFF] hover:bg-[#087CFF] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 md:block"
         >
-          Log Out
+          {isLoggingOut ? "Logging out..." : "Log Out"}
         </button>
 
         {/* MOBILE MENU BUTTON */}
         <button
+          type="button"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation menu"
           aria-expanded={menuOpen}
@@ -79,6 +105,16 @@ export default function Navbar() {
         </button>
       </nav>
 
+      {/* LOGOUT ERROR */}
+      {logoutError && (
+        <p
+          role="alert"
+          className="bg-red-50 px-5 py-2 text-center text-sm text-red-600"
+        >
+          {logoutError}
+        </p>
+      )}
+
       {/* MOBILE DROPDOWN */}
       {menuOpen && (
         <div className="border-t border-slate-100 bg-white px-5 py-5 shadow-lg md:hidden">
@@ -100,10 +136,12 @@ export default function Navbar() {
             </a>
 
             <button
+              type="button"
               onClick={handleLogout}
-              className="w-full rounded-xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6]"
+              disabled={isLoggingOut}
+              className="w-full rounded-xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Log Out
+              {isLoggingOut ? "Logging out..." : "Log Out"}
             </button>
           </div>
         </div>

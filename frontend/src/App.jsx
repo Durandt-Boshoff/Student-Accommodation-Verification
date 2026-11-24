@@ -9,6 +9,7 @@ import {
 import LoginPage from "./pages/LoginPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PropertyDetails from "./pages/PropertyDetails.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -19,22 +20,23 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
 
-        {/* STUDENT DASHBOARD */}
-        <Route
-          path="/student/dashboard"
-          element={<StudentDashboard />}
-        />
+        {/* PROTECTED STUDENT ROUTES */}
+        <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
+          <Route
+            path="/student/dashboard"
+            element={<StudentDashboard />}
+          />
 
-        {/* PROPERTY DETAILS */}
-        <Route
-          path="/properties/:id"
-          element={<PropertyDetails />}
-        />
+          <Route
+            path="/properties/:id"
+            element={<PropertyDetails />}
+          />
+        </Route>
 
         {/* UNKNOWN ROUTES */}
         <Route
           path="*"
-          element={<Navigate to="/" replace />}
+          element={<Navigate to="/login" replace />}
         />
 
       </Routes>

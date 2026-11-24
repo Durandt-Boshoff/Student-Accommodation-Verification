@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function MailIcon() {
   return (
@@ -48,20 +48,64 @@ function EyeIcon({ visible }) {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event) => {
+  // LOGIN WITH HTTP-ONLY COOKIE AUTHENTICATION
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Backend authentication will be connected in Phase 2.
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Login failed. Please try again."
+        );
+      }
+
+      // JWT is stored in an HTTP-only cookie by the backend.
+      // Never store the authentication token in localStorage
+      // or sessionStorage.
+
+      navigate(data.redirectTo);
+
+    } catch (error) {
+      setError(
+        error.message ||
+          "Unable to connect to the server. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <main className="flex min-h-screen w-full items-center justify-center bg-white px-5 py-10 font-sans">
 
-      {/* Main centered login container */}
       <section className="mx-auto flex w-full max-w-[410px] flex-col items-center justify-center">
 
         {/* ResiSure Brand */}
@@ -151,7 +195,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="text-slate-500 transition-colors duration-200 hover:text-[#087CFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 rounded-md"
+                className="rounded-md text-slate-500 transition-colors duration-200 hover:text-[#087CFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               >
                 <EyeIcon visible={showPassword} />
               </button>
@@ -162,18 +206,29 @@ export default function LoginPage() {
           <div className="flex w-full justify-end -mt-1">
             <button
               type="button"
+              onClick={() =>
+                setError("Password recovery is not available yet.")
+              }
               className="text-sm font-medium text-[#087CFF] transition-colors duration-200 hover:text-[#006BE6] hover:underline"
             >
               Forgot password?
             </button>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <p role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
+
           {/* Login Button */}
           <button
             type="submit"
-            className="flex h-[48px] w-full items-center justify-center rounded-2xl bg-[#087CFF] text-sm font-semibold text-white shadow-md shadow-blue-200/60 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#006BE6] hover:shadow-lg hover:shadow-blue-300/50 active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+            disabled={isLoading}
+            className="flex h-[48px] w-full items-center justify-center rounded-2xl bg-[#087CFF] text-sm font-semibold text-white shadow-md shadow-blue-200/60 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#006BE6] hover:shadow-lg hover:shadow-blue-300/50 active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Log In
+            {isLoading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
