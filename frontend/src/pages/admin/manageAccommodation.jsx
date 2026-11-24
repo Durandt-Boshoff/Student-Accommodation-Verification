@@ -1,12 +1,12 @@
-import { useState } from "react"
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../tempComponents/sidebar";
 
 function ManageAccommodation({ onLogout }) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-    const [searchTerm, setSearchTerm] = useState("")
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [accommodations, setAccommodation] = useState([
         {
@@ -37,210 +37,252 @@ function ManageAccommodation({ onLogout }) {
             price: "R5,000",
             status: "Verified",
         },
-    ])
+    ]);
 
     const handleDelete = (id) => {
         const confirmDelete = window.confirm(
             "Are you sure you want to delete this accommodation?"
-        )
+        );
 
         if (confirmDelete) {
             setAccommodation((currentAccommodations) =>
                 currentAccommodations.filter(
                     (accommodation) => accommodation.id !== id
                 )
-            )
+            );
         }
-    }
-    
+    };
+
+    // Filter accommodation listings using the search term
+    const filteredAccommodations = accommodations.filter((accommodation) =>
+        `${accommodation.name} ${accommodation.area} ${accommodation.status}`
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase().trim())
+    );
+
+    // Calculate statistics from the current accommodation list
+    const totalListings = accommodations.length;
+    const verifiedCount = accommodations.filter(
+        (accommodation) => accommodation.status === "Verified"
+    ).length;
+    const pendingCount = accommodations.filter(
+        (accommodation) => accommodation.status === "Pending"
+    ).length;
+    const unverifiedCount = accommodations.filter(
+        (accommodation) => accommodation.status === "Unverified"
+    ).length;
+
+    const cardClass =
+        "rounded-[24px] border border-[#F1F5F9] bg-white p-6 shadow-sm";
+
+    const secondaryButtonClass =
+        "rounded-xl border border-[#E2E8F0] px-3 py-2 text-xs font-semibold text-[#1E293B] transition-colors duration-200 hover:border-[#CBD5E1] hover:bg-[#F8FAFC]";
+
     return (
-        <div className="flex min-h-screen bg-background">
+        <div className="flex min-h-screen bg-[#F8FAFC]">
             <Sidebar
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 onLogout={onLogout}
             />
 
+            {/* Mobile Sidebar Overlay */}
             {isSidebarOpen && (
-                <div 
+                <div
                     className="fixed inset-0 z-30 bg-black/30 md:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
 
             <main className="min-w-0 flex-1">
-                <header className="flex items-center gap-4 px-6 py-4 md:hidden">
+                {/* Mobile Header */}
+                <header className="flex items-center gap-4 border-b border-[#E2E8F0] bg-white px-6 py-4 md:hidden">
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="text-text"
+                        className="text-[#1E293B] transition-colors hover:text-[#087CFF]"
                         aria-label="Toggle Sidebar"
                     >
                         ☰
                     </button>
 
-                    <h1 className="text-lg font-semibold text-text">
+                    <h1 className="text-lg font-semibold text-[#0F172A]">
                         Accommodation
                     </h1>
                 </header>
 
-                <div className="p-6 md:p-8">
-                    <div className="mb-8">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <h1 className="text-2xl font-semibold text-text">
-                                    Accommodation
-                                </h1>
+                <div className="mx-auto w-full max-w-330 p-6 md:p-8">
+                    {/* Page Heading */}
+                    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-[28px] font-bold text-[#0F172A]">
+                                Accommodation
+                            </h1>
 
-                                <p className="mt-1 text-sm text-muted-text">
-                                    Manage accommodation listings and verification status.
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={() => navigate("/admin/properties/new")}
-                                className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-text transition-colors hover:bg-primary-dark hover:text-background"
-                            >
-                                Add Accommodation
-                            </button>
+                            <p className="mt-2 text-sm text-[#64748B]">
+                                Manage accommodation listings and verification status.
+                            </p>
                         </div>
+
+                        <button
+                            onClick={() => navigate("/admin/properties/new")}
+                            className="rounded-2xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#006BE6]"
+                        >
+                            Add Accommodation
+                        </button>
                     </div>
 
+                    {/* Search */}
                     <div className="mb-6">
-                        <div className="flex w-full items-center gap-3 rounded-xl border border-border bg-white px-4 py-3">
+                        <div className="flex h-11.25 w-full items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white px-4 transition-colors focus-within:border-[#087CFF] focus-within:ring-2 focus-within:ring-[#DBEAFE]">
                             <input
                                 type="text"
-                                placeholder="Search accommodation..."
+                                placeholder="Search by property, area or status..."
                                 value={searchTerm}
-                                onChange={(event) => setSearchTerm(event.target.value)}
-                                className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted-text"
+                                onChange={(event) =>
+                                    setSearchTerm(event.target.value)
+                                }
+                                className="w-full bg-transparent text-sm text-[#1E293B] outline-none placeholder:text-[#94A3B8]"
                             />
                         </div>
                     </div>
 
+                    {/* Statistics */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <div className="rounded-xl border border-border bg-white p-5">
-                            <p className="text-sm text-muted-text">
+                        <div className={cardClass}>
+                            <p className="text-sm font-medium text-[#64748B]">
                                 Total Listings
                             </p>
 
-                            <p className="mt-2 text-3xl font-semibold text-text">
-                                24
+                            <p className="mt-3 text-3xl font-bold text-[#0F172A]">
+                                {totalListings}
                             </p>
                         </div>
 
-                        <div className="rounded-xl border border-border bg-white p-5">
-                            <p className="text-sm text-muted-text">
+                        <div className={cardClass}>
+                            <p className="text-sm font-medium text-[#64748B]">
                                 Verified
                             </p>
 
-                            <p className="mt-2 text-3xl font-semibold text-success">
-                                18
+                            <p className="mt-3 text-3xl font-bold text-[#087CFF]">
+                                {verifiedCount}
                             </p>
                         </div>
 
-                        <div className="rounded-xl border border-border bg-white p-5">
-                            <p className="text-sm text-muted-text">
+                        <div className={cardClass}>
+                            <p className="text-sm font-medium text-[#64748B]">
                                 Pending Review
                             </p>
 
-                            <p className="mt-2 text-3xl font-semibold   text-yellow-500">
-                                4
+                            <p className="mt-3 text-3xl font-bold text-amber-500">
+                                {pendingCount}
                             </p>
                         </div>
 
-                        <div className="rounded-xl border border-border bg-white p-5">
-                            <p className="text-sm text-muted-text">
+                        <div className={cardClass}>
+                            <p className="text-sm font-medium text-[#64748B]">
                                 Unverified
                             </p>
 
-                            <p className="mt-2 text-3xl font-semibold text-red-500">
-                                2
+                            <p className="mt-3 text-3xl font-bold text-red-500">
+                                {unverifiedCount}
                             </p>
                         </div>
                     </div>
 
-                    <div className="mt-8 overflow-hidden rounded-xl border border-border bg-white">
-                        <div className="hidden border-b border-border px-6 py-4 md:grid md:grid-cols-5 md:gap-4">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-text">
-                                Property
-                            </p>
-                        
-                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-text">
-                                Area
-                            </p>
-
-                            <p className="text-xs font-semibold uppercase   tracking-wide text-muted-text">
-                                Price
-                            </p>
-
-                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-text">
-                                Status
-                            </p>
-
-                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-text">
-                                Action
-                            </p>
+                    {/* Accommodation Table */}
+                    <div className="mt-8 overflow-hidden rounded-3xl border border-[#F1F5F9] bg-white shadow-sm">
+                        {/* Table Header */}
+                        <div className="hidden border-b border-[#E2E8F0] bg-[#F8FAFC] px-6 py-4 md:grid md:grid-cols-5 md:gap-4">
+                            {["Property", "Area", "Price", "Status", "Action"].map(
+                                (heading) => (
+                                    <p
+                                        key={heading}
+                                        className="text-xs font-semibold uppercase tracking-wide text-[#64748B]"
+                                    >
+                                        {heading}
+                                    </p>
+                                )
+                            )}
                         </div>
 
-                        {accommodations.map((accommodation) => (
-                            <div
-                                key={accommodation.id}
-                                className="border-b border-border px-6 py-5 last:border-b-0 md:grid md:grid-cols-5 md:items-center md:gap-4"
-                            >
-                                <div>
-                                    <p className="text-sm font-semibold text-text">
-                                        {accommodation.name}
-                                    </p>
-                                </div>
+                        {/* Table Rows */}
+                        {filteredAccommodations.length > 0 ? (
+                            filteredAccommodations.map((accommodation) => (
+                                <div
+                                    key={accommodation.id}
+                                    className="border-b border-[#E2E8F0] px-6 py-5 last:border-b-0 md:grid md:grid-cols-5 md:items-center md:gap-4"
+                                >
+                                    <div>
+                                        <p className="text-sm font-semibold text-[#1E293B]">
+                                            {accommodation.name}
+                                        </p>
+                                    </div>
 
-                                <div className="mt-2 md:mt-0">
-                                    <p className="text-sm text-muted-text">
-                                        {accommodation.area}
-                                    </p>
-                                </div>
+                                    <div className="mt-2 md:mt-0">
+                                        <p className="text-sm text-[#64748B]">
+                                            {accommodation.area}
+                                        </p>
+                                    </div>
 
-                                <div className="mt-2 md:mt-0">
-                                    <p className="text-sm text-text">
-                                        {accommodation.price}
-                                    </p>
-                                </div>
+                                    <div className="mt-2 md:mt-0">
+                                        <p className="text-sm font-semibold text-[#1E293B]">
+                                            {accommodation.price}
+                                        </p>
+                                    </div>
 
-                                <div className="mt-2 md:mt-0">
-                                    <span 
-                                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                                            accommodation.status === "Verified"
-                                                ? "bg-green-100 text-green-700"
-                                                : accommodation.status === "Pending"
-                                                    ? "bg-yellow-100 text-yellow-700"
-                                                    : "bg-red-100 text-red-700"
-                                        }`}
-                                    >
-                                        {accommodation.status}
-                                    </span>
-                                </div>
+                                    <div className="mt-3 md:mt-0">
+                                        <span
+                                            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                                                accommodation.status === "Verified"
+                                                    ? "bg-[#EFF6FF] text-[#087CFF]"
+                                                    : accommodation.status === "Pending"
+                                                        ? "bg-amber-50 text-amber-700"
+                                                        : "bg-red-50 text-red-600"
+                                            }`}
+                                        >
+                                            {accommodation.status}
+                                        </span>
+                                    </div>
 
-                                <div className="mt-4 flex gap-2 md:mt-0">
-                                    <button 
-                                        onClick={() => navigate(`/admin/properties/${accommodation.id}/edit`)}
-                                        className="rounded-lg border border-border px-3 py-2 text-xs font-medium text-text hover:bg-green-300"
-                                    >
-                                        Edit
-                                    </button>
+                                    <div className="mt-4 flex gap-2 md:mt-0">
+                                        <button
+                                            onClick={() =>
+                                                navigate(
+                                                    `/admin/properties/${accommodation.id}/edit`
+                                                )
+                                            }
+                                            className={secondaryButtonClass}
+                                        >
+                                            Edit
+                                        </button>
 
-                                    <button
-                                        onClick={() => handleDelete(accommodation.id)}
-                                        className="rounded-lg border border-border px-3 py-2 text-xs font-medium text-text hover:bg-red-300"
-                                    >
-                                        Delete
-                                    </button>
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(accommodation.id)
+                                            }
+                                            className="rounded-xl border border-red-100 px-3 py-2 text-xs font-semibold text-red-600 transition-colors duration-200 hover:border-red-200 hover:bg-red-50"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="px-6 py-12 text-center">
+                                <p className="text-sm font-semibold text-[#1E293B]">
+                                    No accommodation found
+                                </p>
+
+                                <p className="mt-1 text-sm text-[#64748B]">
+                                    Try adjusting your search term.
+                                </p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </main>
         </div>
-    )
+    );
 }
 
 export default ManageAccommodation;

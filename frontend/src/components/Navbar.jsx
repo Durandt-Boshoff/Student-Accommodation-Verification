@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 export default function Navbar() {
@@ -10,7 +9,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
-      <nav className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:px-10">
+      <nav className="mx-auto flex h-19 max-w-360 items-center justify-between px-5 md:px-10">
 
         {/* LOGO */}
         <a href="/student/dashboard" className="flex items-center gap-2">

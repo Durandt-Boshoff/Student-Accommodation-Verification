@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 function InstagramIcon() {
@@ -59,7 +58,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#10192D] text-white">
 
-      <div className="mx-auto max-w-[1440px] px-6 py-14 md:px-10 lg:py-16">
+      <div className="mx-auto max-w-360 px-6 py-14 md:px-10 lg:py-16">
 
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -80,7 +79,7 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="mt-5 max-w-[280px] text-sm leading-7 text-slate-400">
+            <p className="mt-5 max-w-70 text-sm leading-7 text-slate-400">
               South Africa's student accommodation platform.
               Helping students find secure, verified and suitable
               places to call home.

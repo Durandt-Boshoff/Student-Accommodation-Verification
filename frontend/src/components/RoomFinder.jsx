@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 export default function RoomFinder() {
@@ -40,7 +39,7 @@ export default function RoomFinder() {
 
       {/* CHAT WINDOW */}
       {isOpen && (
-        <div className="mb-4 flex h-[500px] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl sm:w-[380px]">
+        <div className="mb-4 flex h-125 w-[calc(100vw-32px)] max-w-95 flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl sm:w-95">
 
           {/* CHAT HEADER */}
           <div className="flex items-center justify-between bg-[#087CFF] px-5 py-4 text-white">

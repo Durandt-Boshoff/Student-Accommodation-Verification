@@ -1,4 +1,3 @@
-
 export default function PropertyCard({
   property,
   isFavorite,
@@ -16,7 +15,7 @@ export default function PropertyCard({
     <article className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
 
       {/* PROPERTY IMAGE */}
-      <div className="relative h-[220px] overflow-hidden bg-slate-100">
+      <div className="relative h-55 overflow-hidden bg-slate-100">
         <img
           src={property.image}
           alt={property.name}

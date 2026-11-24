@@ -22,6 +22,9 @@ import AddAccommodation from "./pages/AddAccommodation";
 import AdminDashboard from "./pages/admin/adminDashboard";
 import ManageAccommodation from "./pages/admin/manageAccommodation";
 
+import TermsAndConditions from "./pages/TermsAndConditions.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+
 function App() {
   return (
     <BrowserRouter>
@@ -62,6 +65,16 @@ function App() {
         <Route
           path="/admin/properties/new"
           element={<AddAccommodation />}
+        />
+
+        <Route
+          path="/terms-of-service"
+          element={<TermsAndConditions />}
+        />
+
+        <Route
+          path="/privacy-policy"
+          element={<PrivacyPolicy />}
         />
 
         {/* UNKNOWN ROUTES */}

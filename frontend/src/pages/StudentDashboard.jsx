@@ -137,7 +137,7 @@ export default function StudentDashboard() {
       <section className="border-b border-slate-100 bg-white px-5 py-5">
         <form
           onSubmit={(event) => event.preventDefault()}
-          className="mx-auto flex h-[54px] w-full max-w-[675px] items-center gap-2 rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition-all duration-200 focus-within:border-[#087CFF] focus-within:ring-4 focus-within:ring-blue-100"
+          className="mx-auto flex h-13.5 w-full max-w-168.75 items-center gap-2 rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition-all duration-200 focus-within:border-[#087CFF] focus-within:ring-4 focus-within:ring-blue-100"
         >
           {/* SEARCH ICON */}
           <div className="flex shrink-0 items-center pl-3 text-slate-400">
@@ -173,7 +173,7 @@ export default function StudentDashboard() {
       </section>
 
       {/* MAIN LISTINGS SECTION */}
-      <main className="mx-auto max-w-[1320px] px-5 pb-16 pt-12 md:px-8">
+      <main className="mx-auto max-w-330 px-5 pb-16 pt-12 md:px-8">
 
         {/* LISTINGS HEADING AND CONTROLS */}
         <section className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
@@ -204,7 +204,7 @@ export default function StudentDashboard() {
               id="sort-properties"
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
-              className="h-10 max-w-[165px] rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-600 outline-none transition-colors focus:border-[#087CFF]"
+              className="h-10 max-w-41.25 rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-600 outline-none transition-colors focus:border-[#087CFF]"
             >
               <option value="recommended">Recommended</option>
               <option value="price-low">Price: Low to High</option>
@@ -372,7 +372,7 @@ export default function StudentDashboard() {
 
       {/* MOBILE FILTER DRAWER */}
       {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-[70] lg:hidden">
+        <div className="fixed inset-0 z-70 lg:hidden">
 
           <button
             type="button"

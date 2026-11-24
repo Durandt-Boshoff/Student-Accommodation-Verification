@@ -51,7 +51,7 @@ export default function PropertyDetails() {
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900">
       <Navbar />
 
-      <main className="mx-auto max-w-[1100px] px-5 py-10 md:px-8">
+      <main className="mx-auto max-w-275 px-5 py-10 md:px-8">
 
         {/* BACK TO LISTINGS */}
         <Link
@@ -67,7 +67,7 @@ export default function PropertyDetails() {
           <img
             src={property.image}
             alt={property.name}
-            className="h-[260px] w-full object-cover sm:h-[380px] lg:h-[460px]"
+            className="h-65 w-full object-cover sm:h-95 lg:h-115"
           />
         </div>
 
