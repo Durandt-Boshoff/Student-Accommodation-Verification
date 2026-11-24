@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-// Change this to your group's app name (also in LandingPage.jsx)
-const APP_NAME = "Student Accommodation Verification";
+// Backend address. In production set VITE_API_URL in the frontend host settings
+const APP_NAME = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const labelClass = "text-sm font-medium text-slate-300";
 const inputClass =
