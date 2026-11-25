@@ -14,7 +14,7 @@ const Footer = () => {
       { label: "How It Works", to: "/how-it-works" },
       { label: "Find Accommodation", to: "/properties" },
       { label: "Safety Tips", to: "/safety-tips" },
-      { label: "Support", to: "/support" },
+      
     ],
     Landlords: [
       { label: "List Your Property", to: "/landlord/list-property" },
@@ -131,14 +131,6 @@ const Footer = () => {
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} ResiSure. All rights reserved.
             </p>
-
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="text-sm font-medium text-gray-400 transition-colors hover:text-[#087CFF]"
-            >
-              Back to top ↑
-            </button>
 
           </div>
         </div>

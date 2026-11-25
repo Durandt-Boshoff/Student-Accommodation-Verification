@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter,
   Routes,
@@ -15,6 +14,11 @@ import LoginPage from "./pages/LoginPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PropertyDetails from "./pages/PropertyDetails.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+// Public Information Pages
+import HowItWorksPage from "./pages/HowItWorksPage";
+import ContactUsPage from "./pages/ContactUsPage";
+import AboutUsPage from "./pages/AboutUsPage";
 
 // Member 3: Accommodation
 import AddAccommodation from "./pages/AddAccommodation";
@@ -33,32 +37,42 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
 
+        {/* PUBLIC INFORMATION PAGES */}
+        <Route
+          path="/how-it-works"
+          element={<HowItWorksPage />}
+        />
+
+        <Route
+          path="/contact"
+          element={<ContactUsPage />}
+        />
+
+        <Route
+          path="/about"
+          element={<AboutUsPage />}
+        />
+
         {/* PROTECTED STUDENT ROUTES */}
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
-
-          {/* Student Dashboard */}
           <Route
             path="/student/dashboard"
             element={<StudentDashboard />}
           />
 
-          {/* Browse Accommodation */}
           <Route
             path="/properties"
             element={<StudentDashboard />}
           />
 
-          {/* Individual Property Details */}
           <Route
             path="/properties/:id"
             element={<PropertyDetails />}
           />
-
         </Route>
 
         {/* PROTECTED ADMIN ROUTES */}
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-
           <Route
             path="/admin/dashboard"
             element={<AdminDashboard />}
@@ -73,7 +87,6 @@ function App() {
             path="/admin/properties/new"
             element={<AddAccommodation />}
           />
-
         </Route>
 
         {/* UNKNOWN ROUTES */}
