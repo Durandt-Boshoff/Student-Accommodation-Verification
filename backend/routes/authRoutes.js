@@ -1,18 +1,23 @@
+
 const express = require("express");
 const router = express.Router();
 
 const {
   signup,
   login,
-  logout
+  logout,
 } = require("../controllers/authController");
 
 const {
   protect,
-  authorize
+  authorize,
 } = require("../middleware/authMiddleware");
 
 const verifyOrigin = require("../middleware/csrfMiddleware");
+
+// ==========================================
+// PUBLIC AUTHENTICATION ROUTES
+// ==========================================
 
 // Student registration
 router.post("/signup", verifyOrigin, signup);
@@ -23,13 +28,21 @@ router.post("/login", verifyOrigin, login);
 // User logout
 router.post("/logout", verifyOrigin, logout);
 
+// ==========================================
+// AUTHENTICATED USER ROUTES
+// ==========================================
+
 // Get the currently authenticated user
 router.get("/me", protect, (req, res) => {
-  res.status(200).json({
+  return res.status(200).json({
     message: "User authenticated successfully.",
-    user: req.user
+    user: req.user,
   });
 });
+
+// ==========================================
+// ROLE-BASED ACCESS CONTROL
+// ==========================================
 
 // Student-only test route
 router.get(
@@ -37,8 +50,8 @@ router.get(
   protect,
   authorize("student"),
   (req, res) => {
-    res.status(200).json({
-      message: "Student access granted!"
+    return res.status(200).json({
+      message: "Student access granted!",
     });
   }
 );
@@ -49,8 +62,8 @@ router.get(
   protect,
   authorize("admin"),
   (req, res) => {
-    res.status(200).json({
-      message: "Admin access granted!"
+    return res.status(200).json({
+      message: "Admin access granted!",
     });
   }
 );

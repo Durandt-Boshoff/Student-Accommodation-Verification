@@ -28,48 +28,58 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* LANDING PAGE */}
+        {/* PUBLIC PAGES */}
         <Route path="/" element={<LandingPage />} />
-
-        {/* AUTHENTICATION */}
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* PROTECTED STUDENT ROUTES */}
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
+
+          {/* Student Dashboard */}
           <Route
             path="/student/dashboard"
             element={<StudentDashboard />}
           />
 
+          {/* Browse Accommodation */}
+          <Route
+            path="/properties"
+            element={<StudentDashboard />}
+          />
+
+          {/* Individual Property Details */}
           <Route
             path="/properties/:id"
             element={<PropertyDetails />}
           />
+
         </Route>
 
-        {/* ADMIN: DASHBOARD */}
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        />
+        {/* PROTECTED ADMIN ROUTES */}
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
 
-        {/* ADMIN: MANAGE ACCOMMODATION */}
-        <Route
-          path="/admin/properties"
-          element={<ManageAccommodation />}
-        />
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboard />}
+          />
 
-        {/* ADMIN: ADD ACCOMMODATION */}
-        <Route
-          path="/admin/properties/new"
-          element={<AddAccommodation />}
-        />
+          <Route
+            path="/admin/properties"
+            element={<ManageAccommodation />}
+          />
+
+          <Route
+            path="/admin/properties/new"
+            element={<AddAccommodation />}
+          />
+
+        </Route>
 
         {/* UNKNOWN ROUTES */}
         <Route
           path="*"
-          element={<Navigate to="/login" replace />}
+          element={<Navigate to="/" replace />}
         />
 
       </Routes>

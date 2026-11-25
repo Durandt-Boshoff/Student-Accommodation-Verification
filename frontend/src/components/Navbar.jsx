@@ -1,15 +1,87 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../services/authService";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import {
+  getCurrentUser,
+  logoutUser,
+} from "../services/authServices";
 
 export default function Navbar() {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
 
   const navigate = useNavigate();
+  const menuRef = useRef(null);
 
+  // LOAD AUTHENTICATED USER
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUser = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+
+        if (isMounted) {
+          setUser(currentUser);
+        }
+      } catch (error) {
+        console.error("Unable to load navbar user:", error);
+
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // CLOSE MENU WHEN CLICKING OUTSIDE
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  // CLOSE MENU WITH ESCAPE KEY
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  // LOGOUT
   const handleLogout = async () => {
     if (isLoggingOut) return;
 
@@ -19,9 +91,10 @@ export default function Navbar() {
     try {
       await logoutUser();
 
+      setUser(null);
       setMenuOpen(false);
-      navigate("/login", { replace: true });
 
+      navigate("/login", { replace: true });
     } catch (error) {
       setLogoutError(
         error.message || "Unable to log out. Please try again."
@@ -31,12 +104,27 @@ export default function Navbar() {
     }
   };
 
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
-      <nav className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:px-10">
+  // CLOSE MOBILE MENU AFTER NAVIGATION
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
 
+  return (
+    <header
+      ref={menuRef}
+      className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white"
+    >
+      <nav
+        className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:px-10"
+        aria-label="Main navigation"
+      >
         {/* LOGO */}
-        <a href="/student/dashboard" className="flex items-center gap-2">
+        <Link
+          to="/"
+          onClick={closeMenu}
+          className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] focus-visible:ring-offset-4"
+          aria-label="ResiSure home"
+        >
           <span className="text-3xl font-extrabold tracking-tight text-slate-950">
             R<span className="text-[#087CFF]">.</span>
           </span>
@@ -44,42 +132,74 @@ export default function Navbar() {
           <span className="text-xl font-bold tracking-tight text-slate-900">
             Resi<span className="text-[#087CFF]">Sure</span>
           </span>
-        </a>
+        </Link>
 
         {/* DESKTOP NAVIGATION */}
         <div className="hidden items-center gap-10 md:flex">
-          <a
-            href="#listings"
-            className="border-b-2 border-slate-900 py-2 text-sm font-semibold text-slate-900 transition-colors"
-          >
-            For Students
-          </a>
+          {!isLoading && user?.role === "student" && (
+            <Link
+              to="/properties"
+              className="border-b-2 border-slate-900 py-2 text-sm font-semibold text-slate-900 transition-colors"
+            >
+              Browse
+            </Link>
+          )}
 
-          <a
-            href="/admin/dashboard"
+          {!isLoading && user?.role === "admin" && (
+            <>
+              <Link
+                to="/admin/dashboard"
+                className="border-b-2 border-slate-900 py-2 text-sm font-semibold text-slate-900 transition-colors"
+              >
+                Admin Dashboard
+              </Link>
+
+              <Link
+                to="/admin/properties"
+                className="py-2 text-sm font-medium text-slate-500 transition-colors duration-200 hover:text-[#087CFF]"
+              >
+                Manage Accommodation
+              </Link>
+            </>
+          )}
+
+          {/* LANDLORD NAVIGATION */}
+          <Link
+            to="/landlord/list-property"
             className="py-2 text-sm font-medium text-slate-500 transition-colors duration-200 hover:text-[#087CFF]"
           >
             For Landlords
-          </a>
+          </Link>
+
+          {isLoading && (
+            <span className="text-sm text-slate-400" aria-live="polite">
+              Loading...
+            </span>
+          )}
         </div>
 
         {/* DESKTOP LOGOUT BUTTON */}
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="hidden rounded-full border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-[#087CFF] hover:bg-[#087CFF] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 md:block"
-        >
-          {isLoggingOut ? "Logging out..." : "Log Out"}
-        </button>
+        {!isLoading && user && (
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="hidden rounded-full border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-[#087CFF] hover:bg-[#087CFF] hover:text-white disabled:cursor-not-allowed disabled:opacity-60 md:block"
+          >
+            {isLoggingOut ? "Logging out..." : "Log Out"}
+          </button>
+        )}
 
         {/* MOBILE MENU BUTTON */}
         <button
           type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
+          onClick={() => setMenuOpen((previous) => !previous)}
+          aria-label={
+            menuOpen ? "Close navigation menu" : "Open navigation menu"
+          }
           aria-expanded={menuOpen}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition-colors hover:bg-slate-50 md:hidden"
+          aria-controls="mobile-navigation"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] md:hidden"
         >
           {menuOpen ? (
             <svg
@@ -88,6 +208,7 @@ export default function Navbar() {
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
+              aria-hidden="true"
             >
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
@@ -98,6 +219,7 @@ export default function Navbar() {
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
+              aria-hidden="true"
             >
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -117,32 +239,86 @@ export default function Navbar() {
 
       {/* MOBILE DROPDOWN */}
       {menuOpen && (
-        <div className="border-t border-slate-100 bg-white px-5 py-5 shadow-lg md:hidden">
+        <div
+          id="mobile-navigation"
+          className="border-t border-slate-100 bg-white px-5 py-5 shadow-lg md:hidden"
+        >
           <div className="flex flex-col gap-5">
-            <a
-              href="#listings"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm font-semibold text-slate-900 transition-colors hover:text-[#087CFF]"
-            >
-              For Students
-            </a>
+            {isLoading && (
+              <p className="text-sm text-slate-400">
+                Loading navigation...
+              </p>
+            )}
 
-            <a
-              href="/admin/dashboard"
-              onClick={() => setMenuOpen(false)}
+            {!isLoading && user?.role === "student" && (
+              <Link
+                to="/properties"
+                onClick={closeMenu}
+                className="text-sm font-semibold text-slate-900 transition-colors hover:text-[#087CFF]"
+              >
+                Browse
+              </Link>
+            )}
+
+            {!isLoading && user?.role === "admin" && (
+              <>
+                <Link
+                  to="/admin/dashboard"
+                  onClick={closeMenu}
+                  className="text-sm font-semibold text-slate-900 transition-colors hover:text-[#087CFF]"
+                >
+                  Admin Dashboard
+                </Link>
+
+                <Link
+                  to="/admin/properties"
+                  onClick={closeMenu}
+                  className="text-sm font-medium text-slate-600 transition-colors hover:text-[#087CFF]"
+                >
+                  Manage Accommodation
+                </Link>
+              </>
+            )}
+
+            {/* LANDLORD LINK */}
+            <Link
+              to="/landlord/list-property"
+              onClick={closeMenu}
               className="text-sm font-medium text-slate-600 transition-colors hover:text-[#087CFF]"
             >
               For Landlords
-            </a>
+            </Link>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="w-full rounded-xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isLoggingOut ? "Logging out..." : "Log Out"}
-            </button>
+            {!isLoading && user && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full rounded-xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isLoggingOut ? "Logging out..." : "Log Out"}
+              </button>
+            )}
+
+            {!isLoading && !user && (
+              <div className="flex flex-col gap-4">
+                <Link
+                  to="/login"
+                  onClick={closeMenu}
+                  className="text-sm font-medium text-slate-600 hover:text-[#087CFF]"
+                >
+                  Log In
+                </Link>
+
+                <Link
+                  to="/signup"
+                  onClick={closeMenu}
+                  className="rounded-xl bg-[#087CFF] px-5 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#006BE6]"
+                >
+                  Create Account
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
