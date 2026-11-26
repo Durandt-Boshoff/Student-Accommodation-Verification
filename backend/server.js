@@ -1,20 +1,46 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const propertyRoutes = require('./propertyRoutes');
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+const propertyRoutes = require("./propertyRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.use(cors());
+const frontendUrl = (
+  process.env.FRONTEND_URL || "http://localhost:5173"
+).trim().replace(/\/+$/, "");
+
+app.use(
+  cors({
+    origin: frontendUrl,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
+app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.send('message');
+// Authentication routes
+app.use("/api/auth", authRoutes);
+
+// Accommodation property routes
+app.use("/api/properties", propertyRoutes);
+
+// Health check
+app.get("/", (req, res) => {
+  return res.status(200).json({
+    message: "ResiSure API is running!",
+    status: "OK",
+  });
 });
 
-app.use('/api/properties', propertyRoutes);
-
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`ResiSure API is running on port ${port}`);
+  console.log(`Allowed frontend origin: ${frontendUrl}`);
 });
