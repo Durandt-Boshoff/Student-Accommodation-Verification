@@ -61,7 +61,7 @@ export default function PropertyDetails() {
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900">
       <Navbar />
 
-      <main className="mx-auto max-w-[1100px] px-5 py-10 md:px-8">
+      <main className="mx-auto max-w-275 px-5 py-10 md:px-8">
 
         {/* BACK TO LISTINGS */}
         <Link

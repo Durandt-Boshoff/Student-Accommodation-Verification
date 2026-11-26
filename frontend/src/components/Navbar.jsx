@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -115,7 +114,7 @@ export default function Navbar() {
       className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white"
     >
       <nav
-        className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:px-10"
+        className="mx-auto flex h-19 max-w-360 items-center justify-between px-5 md:px-10"
         aria-label="Main navigation"
       >
         {/* LOGO */}

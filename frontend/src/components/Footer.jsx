@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -14,7 +13,6 @@ const Footer = () => {
       { label: "How It Works", to: "/how-it-works" },
       { label: "Find Accommodation", to: "/properties" },
       { label: "Safety Tips", to: "/safety-tips" },
-      
     ],
     Landlords: [
       { label: "List Your Property", to: "/landlord/list-property" },
@@ -31,7 +29,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#101827] text-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+      <div className="mx-auto max-w-360 px-6 py-14 md:px-10 lg:py-16">
 
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -45,9 +43,10 @@ const Footer = () => {
               ResiSure
             </Link>
 
-            <p className="mt-4 max-w-xs text-sm leading-7 text-gray-400">
-              Helping students find safer, more reliable accommodation
-              through transparent property information and verification.
+            <p className="mt-5 max-w-70 text-sm leading-7 text-slate-400">
+              South Africa's student accommodation platform.
+              Helping students find secure, verified and suitable
+              places to call home.
             </p>
 
             <div className="mt-6 flex items-center gap-4">

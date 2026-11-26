@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -9,14 +8,9 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
-// Frontend URL for CORS
 const frontendUrl = (
   process.env.FRONTEND_URL || "http://localhost:5173"
 ).trim().replace(/\/+$/, "");
-
-// ==========================================
-// GLOBAL MIDDLEWARE
-// ==========================================
 
 app.use(
   cors({
@@ -30,17 +24,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// ==========================================
-// API ROUTES
-// ==========================================
-
 const authRoutes = require("./routes/authRoutes");
 
 app.use("/api/auth", authRoutes);
-
-// ==========================================
-// HEALTH CHECK
-// ==========================================
 
 app.get("/", (req, res) => {
   return res.status(200).json({
@@ -48,10 +34,6 @@ app.get("/", (req, res) => {
     status: "OK",
   });
 });
-
-// ==========================================
-// START SERVER
-// ==========================================
 
 app.listen(port, () => {
   console.log(`ResiSure API is running on port ${port}`);

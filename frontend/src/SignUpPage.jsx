@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000/api/auth";
 
-const labelClass = "text-sm font-medium text-slate-300";
+const APP_NAME = "ResiSure";
+
+const labelClass = "text-sm font-medium text-[#1E293B]";
 
 const inputClass =
-  "mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40";
+  "mt-1 h-[45px] w-full rounded-2xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#1E293B] placeholder-[#94A3B8] outline-none transition-colors duration-200 focus:border-[#087CFF] focus:ring-2 focus:ring-[#DBEAFE]";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
@@ -117,26 +118,31 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-8">
 
-        {/* BRAND */}
-        <Link to="/" className="text-xl font-bold text-white">
-          Resi<span className="text-blue-400">Sure</span>
+      <div className="w-full max-w-102.5 rounded-3xl border border-[#F1F5F9] bg-white p-6 shadow-sm sm:p-8">
+
+        {/* Logo */}
+        <Link
+          to="/"
+          className="text-xl font-bold text-[#020617]"
+        >
+          <span className="text-[#087CFF]">R.</span> {APP_NAME}
         </Link>
 
-        <h1 className="mt-5 text-2xl font-bold text-white">
+        {/* Heading */}
+        <h1 className="mt-6 text-[28px] font-bold leading-tight text-[#0F172A]">
           Create your account
         </h1>
 
-        <p className="mt-1 text-sm text-slate-400">
-          Sign up to browse student accommodation.
+        <p className="mt-2 text-sm leading-6 text-[#64748B]">
+          Sign up to browse verified student accommodation.
         </p>
 
         {/* SIGNUP FORM */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
 
-          {/* FULL NAME */}
+          {/* Full Name */}
           <div>
             <label htmlFor="name" className={labelClass}>
               Full name
@@ -155,7 +161,7 @@ export default function SignUpPage() {
             />
           </div>
 
-          {/* EMAIL */}
+          {/* Email */}
           <div>
             <label htmlFor="email" className={labelClass}>
               Email address
@@ -173,12 +179,12 @@ export default function SignUpPage() {
               className={inputClass}
             />
 
-            <p className="mt-1 text-xs text-slate-500">
-              We use your email to identify your account.
+            <p className="mt-1.5 text-xs text-[#94A3B8]">
+              We use your email only to log you in.
             </p>
           </div>
 
-          {/* PASSWORD */}
+          {/* Password */}
           <div>
             <label htmlFor="password" className={labelClass}>
               Password
@@ -201,19 +207,19 @@ export default function SignUpPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((previous) => !previous)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-400 hover:text-blue-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#087CFF] hover:text-[#006BE6]"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-[#94A3B8]">
               Use at least 8 characters.
             </p>
           </div>
 
-          {/* CONFIRM PASSWORD */}
+          {/* Confirm Password */}
           <div>
             <label htmlFor="confirm" className={labelClass}>
               Confirm password
@@ -237,7 +243,7 @@ export default function SignUpPage() {
                 onClick={() =>
                   setShowConfirmPassword((previous) => !previous)
                 }
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-400 hover:text-blue-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#087CFF] hover:text-[#006BE6]"
                 aria-label={
                   showConfirmPassword
                     ? "Hide confirm password"
@@ -249,54 +255,53 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* ERROR */}
+          {/* Error */}
           {error && (
             <p
               role="alert"
-              className="rounded-lg bg-red-950 px-3 py-2 text-sm text-red-300"
+              className="rounded-2xl border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-600"
             >
               {error}
             </p>
           )}
 
-          {/* SUCCESS */}
+          {/* Success */}
           {success && (
             <div
               role="status"
-              className="rounded-lg bg-green-950 px-3 py-3 text-sm text-green-300"
+              className="rounded-2xl bg-green-50 px-3 py-3 text-sm text-green-700"
             >
               <p>{success}</p>
 
               <button
                 type="button"
                 onClick={() => navigate("/login", { replace: true })}
-                className="mt-2 font-semibold underline hover:text-white"
+                className="mt-2 font-semibold underline hover:text-green-900"
               >
                 Continue to login
               </button>
             </div>
           )}
 
-          {/* SUBMIT */}
+          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-blue-500 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-2xl bg-[#087CFF] px-4 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#006BE6] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Creating account..." : "Create account"}
           </button>
         </form>
 
-        {/* LOGIN LINK */}
-        <p className="mt-6 text-center text-sm text-slate-400">
+        {/* Login Link */}
+        <p className="mt-6 text-center text-sm text-[#64748B]">
           Already have an account?{" "}
-          <button
-            type="button"
-            onClick={() => navigate("/login", { replace: true })}
-            className="font-medium text-blue-400 hover:underline"
+          <Link
+            to="/login"
+            className="font-semibold text-[#087CFF] transition-colors duration-200 hover:text-[#006BE6]"
           >
             Log in
-          </button>
+          </Link>
         </p>
 
       </div>

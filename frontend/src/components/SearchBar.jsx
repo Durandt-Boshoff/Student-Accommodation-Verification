@@ -2,11 +2,11 @@ export default function SearchBar() {
   return (
     <section className="w-full border-b border-slate-100 bg-white px-5 py-5 md:py-6">
 
-      <div className="mx-auto flex w-full max-w-[1440px] justify-center">
+      <div className="mx-auto flex w-full max-w-360 justify-center">
 
         <form
           onSubmit={(event) => event.preventDefault()}
-          className="flex h-[54px] w-full max-w-[675px] items-center gap-3 rounded-full border border-slate-200 bg-white px-4 shadow-sm transition-all duration-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50"
+          className="flex h-13.5 w-full max-w-168.75 items-center gap-3 rounded-full border border-slate-200 bg-white px-4 shadow-sm transition-all duration-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50"
         >
 
           {/* SEARCH ICON */}
