@@ -1,16 +1,29 @@
 
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RoomFinder from "../components/RoomFinder";
+
 import { properties } from "../data/properties";
 
 export default function PropertyDetails() {
   const { id } = useParams();
+  const [imageFailed, setImageFailed] = useState(false);
 
   const property = properties.find(
     (item) => String(item.id) === id
   );
+
+  const isAvailable = property?.available !== false;
+
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-ZA", {
+      style: "currency",
+      currency: "ZAR",
+      maximumFractionDigits: 0,
+    }).format(price || 0);
 
   if (!property) {
     return (
@@ -18,17 +31,21 @@ export default function PropertyDetails() {
         <Navbar />
 
         <main className="mx-auto max-w-3xl px-6 py-24 text-center">
+          <div className="mb-5 text-5xl text-slate-300" aria-hidden="true">
+            ⌕
+          </div>
+
           <h1 className="text-2xl font-bold text-slate-900">
             Property not found
           </h1>
 
           <p className="mt-3 text-slate-500">
-            This property may no longer be available.
+            This property may no longer be available or the link may be incorrect.
           </p>
 
           <Link
-            to="/student/dashboard"
-            className="mt-6 inline-flex rounded-full bg-[#087CFF] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6]"
+            to="/properties"
+            className="mt-6 inline-flex rounded-full bg-[#087CFF] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] focus-visible:ring-offset-2"
           >
             Back to listings
           </Link>
@@ -40,13 +57,6 @@ export default function PropertyDetails() {
     );
   }
 
-  const formatPrice = (price) =>
-    new Intl.NumberFormat("en-ZA", {
-      style: "currency",
-      currency: "ZAR",
-      maximumFractionDigits: 0,
-    }).format(price);
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900">
       <Navbar />
@@ -55,26 +65,34 @@ export default function PropertyDetails() {
 
         {/* BACK TO LISTINGS */}
         <Link
-          to="/student/dashboard"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-[#087CFF]"
+          to="/properties"
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-[#087CFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] focus-visible:ring-offset-2"
         >
           <span aria-hidden="true">←</span>
           Back to listings
         </Link>
 
         {/* PROPERTY IMAGE */}
-        <div className="mt-6 overflow-hidden rounded-3xl bg-slate-100">
-          <img
-            src={property.image}
-            alt={property.name}
-            className="h-65 w-full object-cover sm:h-95 lg:h-115"
-          />
+        <div className="mt-6 min-h-[260px] overflow-hidden rounded-3xl bg-slate-100 sm:min-h-[380px] lg:min-h-[460px]">
+          {imageFailed || !property.image ? (
+            <div className="flex min-h-[260px] items-center justify-center px-5 text-center text-sm text-slate-400 sm:min-h-[380px] lg:min-h-[460px]">
+              Property image unavailable
+            </div>
+          ) : (
+            <img
+              src={property.image}
+              alt={`${property.name || "Student accommodation"} property`}
+              onError={() => setImageFailed(true)}
+              className="h-[260px] w-full object-cover sm:h-[380px] lg:h-[460px]"
+            />
+          )}
         </div>
 
         {/* PROPERTY INFORMATION */}
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
 
           <section>
+            {/* PROPERTY BADGES */}
             <div className="flex flex-wrap gap-2">
 
               {property.nsfasAccredited && (
@@ -96,15 +114,18 @@ export default function PropertyDetails() {
               )}
             </div>
 
+            {/* PROPERTY NAME */}
             <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">
               {property.name}
             </h1>
 
+            {/* PROPERTY ADDRESS */}
             <p className="mt-3 flex items-center gap-2 text-sm text-slate-500">
               <span aria-hidden="true">⌖</span>
               {property.address}
             </p>
 
+            {/* PROPERTY OVERVIEW */}
             <div className="mt-8 border-t border-slate-200 pt-6">
               <h2 className="text-xl font-semibold text-slate-900">
                 Property Overview
@@ -117,6 +138,7 @@ export default function PropertyDetails() {
               </p>
             </div>
 
+            {/* ACCOMMODATION DETAILS */}
             <div className="mt-8 border-t border-slate-200 pt-6">
               <h2 className="text-xl font-semibold text-slate-900">
                 Accommodation Details
@@ -127,21 +149,21 @@ export default function PropertyDetails() {
                 <div className="rounded-2xl bg-white p-5">
                   <p className="text-sm text-slate-500">City</p>
                   <p className="mt-2 font-semibold text-slate-900">
-                    {property.city}
+                    {property.city || "Not specified"}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-white p-5">
                   <p className="text-sm text-slate-500">University</p>
                   <p className="mt-2 font-semibold text-slate-900">
-                    {property.university}
+                    {property.university || "Not specified"}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-white p-5">
                   <p className="text-sm text-slate-500">Room types</p>
                   <p className="mt-2 font-semibold text-slate-900">
-                    {property.roomTypes}
+                    {property.roomTypes ?? "Not specified"}
                   </p>
                 </div>
 
@@ -173,17 +195,32 @@ export default function PropertyDetails() {
 
               <div className="my-6 border-t border-slate-100" />
 
+              {/* AVAILABILITY */}
               <p className="flex items-center gap-2 text-sm font-medium">
-                <span className={`h-2.5 w-2.5 rounded-full ${
-                  property.available ? "bg-green-500" : "bg-slate-400"
-                }`} />
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${
+                    isAvailable
+                      ? "bg-green-500"
+                      : "bg-slate-400"
+                  }`}
+                />
 
-                {property.available ? "Available" : "Currently unavailable"}
+                <span
+                  className={
+                    isAvailable
+                      ? "text-green-700"
+                      : "text-slate-500"
+                  }
+                >
+                  {isAvailable
+                    ? "Available"
+                    : "Currently unavailable"}
+                </span>
               </p>
 
               <Link
-                to="/student/dashboard"
-                className="mt-6 flex w-full items-center justify-center rounded-2xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6]"
+                to="/properties"
+                className="mt-6 flex w-full items-center justify-center rounded-2xl bg-[#087CFF] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006BE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] focus-visible:ring-offset-2"
               >
                 Back to listings
               </Link>

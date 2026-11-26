@@ -30,6 +30,16 @@ export default function StudentDashboard() {
   const [favorites, setFavorites] = useState([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  // COUNT ACTIVE FILTERS
+  const activeFilterCount = [
+    searchTerm.trim() !== "",
+    selectedCity !== "All Cities",
+    selectedUniversity !== "All Universities",
+    filters.nsfasAccredited,
+    filters.verified,
+    filters.furnished,
+  ].filter(Boolean).length;
+
   // FILTER AND SORT PROPERTIES
   const filteredProperties = useMemo(() => {
     let results = properties.filter((property) => {
@@ -120,6 +130,7 @@ export default function StudentDashboard() {
 
     setShowFavoritesOnly(false);
     setSortBy("recommended");
+    setMobileFiltersOpen(false);
   };
 
   // NAVIGATE TO INDIVIDUAL PROPERTY DETAILS
@@ -137,6 +148,7 @@ export default function StudentDashboard() {
       <section className="border-b border-slate-100 bg-white px-5 py-5">
         <form
           onSubmit={(event) => event.preventDefault()}
+          role="search"
           className="mx-auto flex h-13.5 w-full max-w-168.75 items-center gap-2 rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition-all duration-200 focus-within:border-[#087CFF] focus-within:ring-4 focus-within:ring-blue-100"
         >
           {/* SEARCH ICON */}
@@ -147,6 +159,7 @@ export default function StudentDashboard() {
               fill="none"
               stroke="currentColor"
               strokeWidth="1.8"
+              aria-hidden="true"
             >
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-4-4" />
@@ -154,7 +167,12 @@ export default function StudentDashboard() {
           </div>
 
           {/* SEARCH INPUT */}
+          <label htmlFor="property-search" className="sr-only">
+            Search accommodation
+          </label>
+
           <input
+            id="property-search"
             type="search"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
@@ -165,7 +183,7 @@ export default function StudentDashboard() {
           {/* SEARCH BUTTON */}
           <button
             type="submit"
-            className="flex h-full shrink-0 items-center justify-center rounded-full bg-[#087CFF] px-6 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#006BE6]"
+            className="flex h-full shrink-0 items-center justify-center rounded-full bg-[#087CFF] px-6 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#006BE6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] focus-visible:ring-offset-2"
           >
             Search
           </button>
@@ -212,14 +230,16 @@ export default function StudentDashboard() {
             </select>
 
             {/* GRID / LIST SWITCH */}
-            <div className="flex h-10 items-center rounded-full border border-slate-200 bg-white p-1">
-
+            <div
+              className="flex h-10 items-center rounded-full border border-slate-200 bg-white p-1"
+              aria-label="Property display options"
+            >
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
                 aria-label="Grid view"
                 aria-pressed={viewMode === "grid"}
-                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] ${
                   viewMode === "grid"
                     ? "bg-blue-50 text-[#087CFF]"
                     : "text-slate-400 hover:text-slate-700"
@@ -231,6 +251,7 @@ export default function StudentDashboard() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.8"
+                  aria-hidden="true"
                 >
                   <rect x="3" y="3" width="7" height="7" rx="1" />
                   <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -244,7 +265,7 @@ export default function StudentDashboard() {
                 onClick={() => setViewMode("list")}
                 aria-label="List view"
                 aria-pressed={viewMode === "list"}
-                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087CFF] ${
                   viewMode === "list"
                     ? "bg-blue-50 text-[#087CFF]"
                     : "text-slate-400 hover:text-slate-700"
@@ -256,6 +277,7 @@ export default function StudentDashboard() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.8"
+                  aria-hidden="true"
                 >
                   <path d="M8 6h13M8 12h13M8 18h13" />
                   <circle cx="4" cy="6" r="1" />
@@ -292,14 +314,22 @@ export default function StudentDashboard() {
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(true)}
+                aria-expanded={mobileFiltersOpen}
+                aria-controls="mobile-filter-drawer"
                 className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-[#087CFF] hover:text-[#087CFF]"
               >
                 Filters
+                {activeFilterCount > 0 && (
+                  <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#087CFF] px-1.5 text-xs font-semibold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
               </button>
 
               <button
                 type="button"
-                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                onClick={() => setShowFavoritesOnly((current) => !current)}
+                aria-pressed={showFavoritesOnly}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   showFavoritesOnly
                     ? "border-[#087CFF] bg-blue-50 text-[#087CFF]"
@@ -314,7 +344,8 @@ export default function StudentDashboard() {
             <div className="mb-4 hidden justify-end lg:flex">
               <button
                 type="button"
-                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                onClick={() => setShowFavoritesOnly((current) => !current)}
+                aria-pressed={showFavoritesOnly}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   showFavoritesOnly
                     ? "border-[#087CFF] bg-blue-50 text-[#087CFF]"
@@ -341,6 +372,7 @@ export default function StudentDashboard() {
                     isFavorite={favorites.includes(property.id)}
                     onToggleFavorite={() => toggleFavorite(property.id)}
                     onViewDetails={() => handleViewDetails(property)}
+                    viewMode={viewMode}
                   />
                 ))}
               </div>
@@ -381,10 +413,18 @@ export default function StudentDashboard() {
             className="absolute inset-0 bg-slate-950/40"
           />
 
-          <div className="absolute right-0 top-0 h-full w-[min(88%,360px)] overflow-y-auto bg-white p-5 shadow-2xl">
-
+          <div
+            id="mobile-filter-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-filter-title"
+            className="absolute right-0 top-0 h-full w-[min(88%,360px)] overflow-y-auto bg-white p-5 shadow-2xl"
+          >
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2
+                id="mobile-filter-title"
+                className="text-lg font-bold text-slate-900"
+              >
                 Filters
               </h2>
 

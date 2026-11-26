@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter,
   Routes,
@@ -14,6 +13,12 @@ import SignUpPage from "./SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PropertyDetails from "./pages/PropertyDetails.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Public Information Pages
+import HowItWorksPage from "./pages/HowItWorksPage";
+import ContactUsPage from "./pages/ContactUsPage";
+import AboutUsPage from "./pages/AboutUsPage";
 
 // Member 3: Accommodation
 import AddAccommodation from "./pages/AddAccommodation";
@@ -30,42 +35,62 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* LANDING PAGE */}
+        {/* PUBLIC PAGES */}
         <Route path="/" element={<LandingPage />} />
-
-        {/* AUTHENTICATION */}
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
 
-        {/* STUDENT DASHBOARD */}
+        {/* PUBLIC INFORMATION PAGES */}
         <Route
-          path="/student/dashboard"
-          element={<StudentDashboard />}
+          path="/how-it-works"
+          element={<HowItWorksPage />}
         />
 
-        {/* PROPERTY DETAILS */}
         <Route
-          path="/properties/:id"
-          element={<PropertyDetails />}
+          path="/contact"
+          element={<ContactUsPage />}
         />
 
-        {/* ADMIN: DASHBOARD */}
         <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
+          path="/about"
+          element={<AboutUsPage />}
         />
 
-        {/* ADMIN: MANAGE ACCOMMODATION */}
-        <Route
-          path="/admin/properties"
-          element={<ManageAccommodation />}
-        />
+        {/* PROTECTED STUDENT ROUTES */}
+        <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
+          <Route
+            path="/student/dashboard"
+            element={<StudentDashboard />}
+          />
 
-        {/* ADMIN: ADD ACCOMMODATION */}
-        <Route
-          path="/admin/properties/new"
-          element={<AddAccommodation />}
-        />
+          <Route
+            path="/properties"
+            element={<StudentDashboard />}
+          />
+
+          <Route
+            path="/properties/:id"
+            element={<PropertyDetails />}
+          />
+        </Route>
+
+        {/* PROTECTED ADMIN ROUTES */}
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboard />}
+          />
+
+          <Route
+            path="/admin/properties"
+            element={<ManageAccommodation />}
+          />
+
+          <Route
+            path="/admin/properties/new"
+            element={<AddAccommodation />}
+          />
+        </Route>
 
         <Route
           path="/terms-of-service"
