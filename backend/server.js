@@ -4,8 +4,10 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-const app = express();
+const propertyRoutes = require("./propertyRoutes");
+const authRoutes = require("./routes/authRoutes");
 
+const app = express();
 const port = process.env.PORT || 3000;
 
 const frontendUrl = (
@@ -24,10 +26,13 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-const authRoutes = require("./routes/authRoutes");
-
+// Authentication routes
 app.use("/api/auth", authRoutes);
 
+// Accommodation property routes
+app.use("/api/properties", propertyRoutes);
+
+// Health check
 app.get("/", (req, res) => {
   return res.status(200).json({
     message: "ResiSure API is running!",
